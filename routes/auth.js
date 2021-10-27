@@ -51,6 +51,10 @@ router.post("/register", async function (req, res, next) {
 
   const newUser = await User.register({ ...req.body, isAdmin: false });
   const token = createToken(newUser);
+
+  // const addPhotoToAws = await upload(req.body.name)
+  const newPhoto = await Photo.add(newUser.id, req.body.photoUrl);
+
   return res.status(201).json({ token });
 });
 

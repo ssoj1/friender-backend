@@ -81,7 +81,7 @@ class User {
             zipcode
         )
         VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING username, firstName, lastName, email, zipcode`,
+        RETURNING id, username, firstName, lastName, email, zipcode`,
         [
           username,
           hashedPassword,

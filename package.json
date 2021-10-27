@@ -12,6 +12,7 @@
     "aws-sdk": "^2.1015.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
+    "colors": "^1.4.0",
     "dotenv": "^10.0.0",
     "express": "^5.0.0-alpha.8",
     "jsonschema": "^1.4.0",
