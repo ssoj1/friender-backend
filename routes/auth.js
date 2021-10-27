@@ -12,6 +12,9 @@ const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
 const { BadRequestError } = require("../expressError");
 const fs = require('fs');
+const multer  = require('multer');
+const upload = multer({ dest: './photos' });
+const uploadToS3 = require("../aws.js");
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -44,16 +47,18 @@ router.post("/token", async function (req, res, next) {
  * Authorization required: none
  */
 
-router.post("/register", async function (req, res, next) {
-  const validator = jsonschema.validate(req.body, userRegisterSchema);
-  if (!validator.valid) {
-    const errs = validator.errors.map(e => e.stack);
-    throw new BadRequestError(errs);
-  }
-  console.log("req.body.photo.name is ", req.body.photo.name);
+router.post("/register", upload.single('photo'), async function (req, res, next) {
+  // const validator = jsonschema.validate(req.body, userRegisterSchema);
+  // if (!validator.valid) {
+  //   const errs = validator.errors.map(e => e.stack);
+  //   throw new BadRequestError(errs);
+  // }
+  console.log("req is ", req)
+  console.log("req.body is ", req.body);
+  console.log("req.file is ", req.file);
 
-  fs.readFile(req.body.photo, function(err, data){
-  });
+  const fileLocation = await uploadToS3(req.file.filename);
+
 
   // const newUser = await User.register({ ...req.body });
   // const token = createToken(newUser);

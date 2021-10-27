@@ -33,5 +33,7 @@ const uploadToS3 = (fileName) => {
         return data.Location;
     });
 };
+ 
+module.exports = { uploadToS3 };
 
-uploadToS3("perry.jpg"); // file to upload
+// uploadToS3("perry.jpg"); // file to upload
