@@ -11,6 +11,7 @@ const { createToken } = require("../helpers/tokens");
 const userAuthSchema = require("../schemas/userAuth.json");
 const userRegisterSchema = require("../schemas/userRegister.json");
 const { BadRequestError } = require("../expressError");
+const fs = require('fs');
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -35,7 +36,8 @@ router.post("/token", async function (req, res, next) {
 
 /** POST /auth/register:   { user } => { token }
  *
- * user must include { username, password, firstName, lastName, email }
+ * user must include 
+ * { username, password, firstName, lastName, email, zipcode, photo, hobbies, interests  }
  *
  * Returns JWT token which can be used to authenticate further requests.
  *
@@ -48,14 +50,18 @@ router.post("/register", async function (req, res, next) {
     const errs = validator.errors.map(e => e.stack);
     throw new BadRequestError(errs);
   }
+  console.log("req.body.photo.name is ", req.body.photo.name);
 
-  const newUser = await User.register({ ...req.body, isAdmin: false });
-  const token = createToken(newUser);
+  fs.readFile(req.body.photo, function(err, data){
+  });
 
-  // const addPhotoToAws = await upload(req.body.name)
-  const newPhoto = await Photo.add(newUser.id, req.body.photoUrl);
+  // const newUser = await User.register({ ...req.body });
+  // const token = createToken(newUser);
 
-  return res.status(201).json({ token });
+  // // const addPhotoToAws = await upload(req.body.name)
+  // const newPhoto = await Photo.add(newUser.id, req.body.photoUrl);
+
+  // return res.status(201).json({ token });
 });
 
 

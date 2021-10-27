@@ -65,5 +65,5 @@ function ensureLoggedIn(req, res, next) {
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  ensureCorrectUser,
+  // ensureCorrectUser,
 };

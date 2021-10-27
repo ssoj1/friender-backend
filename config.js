@@ -12,8 +12,10 @@ const PORT = +process.env.PORT || 3001;
 // Use dev database, testing database, or via env var, production database
 function getDatabaseUri() {
   return (process.env.NODE_ENV === "test")
-      ? "postgresql://jeanne:password@localhost/friender_test"
-      : process.env.DATABASE_URL || "postgresql://jeanne:password@localhost/friender";
+    ? "friender_test"
+    : process.env.DATABASE_URL || "friender";
+      // ? "postgresql://jeanne:password@localhost/friender_test"
+      // : process.env.DATABASE_URL || "postgresql://jeanne:password@localhost/friender";
       // ? "postgresql://jeanne:password@localhost/jobly_test"
       // : "postgresql://jeanne:password@localhost/jobly";
 }

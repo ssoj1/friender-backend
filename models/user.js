@@ -57,7 +57,16 @@ class User {
    **/
 
   static async register(
-      { username, password, firstName, lastName, email, zipcode }) {
+      { username, 
+        password, 
+        firstName, 
+        lastName, 
+        email, 
+        zipcode, 
+        photo, 
+        hobbies, 
+        interests }) {
+
     const duplicateCheck = await db.query(
         `SELECT username
         FROM users
@@ -71,18 +80,20 @@ class User {
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
-    const result = await db.query(
-        `INSERT INTO users (
-            username,
-            password,
-            first_name,
-            last_name,
-            email,
-            zipcode
+    
+    const userResult = await db.query(
+      `INSERT INTO users (
+        username,
+        password,
+        first_name,
+        last_name,
+        email,
+        zipcode
         )
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, username, firstName, lastName, email, zipcode`,
         [
+          id,
           username,
           hashedPassword,
           firstName,
@@ -90,11 +101,18 @@ class User {
           email,
           zipcode,
         ],
-    );
+        );
+        
+        const user = userResult.rows[0];
 
-    const user = result.rows[0];
-
-    return user;
+        const photoResult = await db.query(
+          `INSERT INTO photos (user_id, url )
+          VALUES ($1, $2)
+          RETURNING id, user_id, url`,
+          [user.id, photo.name] 
+        )
+        
+        return user;
   }
 
   /** Find all users.
