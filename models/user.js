@@ -24,12 +24,13 @@ class User {
   static async authenticate(username, password) {
     // try to find the user first
     const result = await db.query(
-          `SELECT username,
+          `SELECT id, 
+                  username,
                   password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
+                  firstname,
+                  lastname,
+                  email, 
+                  zipcode
           FROM users
           WHERE username = $1`,
         [username],
@@ -115,12 +116,18 @@ class User {
     const result = await db.query(
           `SELECT id, 
               username,
-              firstName,
-              lastName",
+              firstname,
+              lastname,
               email,
-              zipcode"
-          FROM users
-          ORDER BY username`,
+              zipcode,
+              url as photoUrl, 
+              hobbies, 
+              interests
+          FROM users 
+          JOIN photos ON user_id = users.id
+          JOIN hobbies ON user_id = users.id
+          JOIN interests ON user_id = users.id
+          ORDER BY lastname, firstname`
     );
 
     return result.rows;
@@ -140,9 +147,9 @@ class User {
           `SELECT id, 
                   username,
                   firstname,
-                  lastname",
+                  lastname,
                   email,
-                  zipcode"
+                  zipcode
           FROM users
           WHERE id = $1`,
         [id],
