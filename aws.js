@@ -12,7 +12,7 @@ const s3 = new AWS.S3({
     secretAccessKey: AWSCredentials.secret
 });
 
-const uploadToS3 = (fileName) => {
+function uploadToS3(fileName) {
     // Read content from the file
     const fileContent = fs.readFileSync(fileName);
 
@@ -22,6 +22,8 @@ const uploadToS3 = (fileName) => {
         Key: fileName,
         Body: fileContent
     };
+
+    let fileLocation;
     console.log(params);
     
     // Uploading files to the bucket
@@ -30,10 +32,11 @@ const uploadToS3 = (fileName) => {
             throw err;
         }
         console.log(`File uploaded successfully. ${data.Location}`);
-        return data.Location;
+        fileLocation= data.Location;
     });
+    return fileLocation;
 };
- 
+
 module.exports = { uploadToS3 };
 
 // uploadToS3("perry.jpg"); // file to upload
