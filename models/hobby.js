@@ -14,7 +14,7 @@ class Hobby {
      *
      * Returns { id, user_id, hobby }
     **/
-    static async create(data) {
+    static async add(id, hobbies) {
         const result = await db.query(
             `INSERT INTO hobbies (
                 user_id,
@@ -22,31 +22,31 @@ class Hobby {
             VALUES ($1, $2)
             RETURNING id, user_id, hobby`,
             [
-                data.user_id,
-                data.hobby,
+                id,
+                hobbies,
             ]);
 
         let hobby = result.rows[0];
 
         return hobby;
     }
-
-    /** Delete given hobby from database; returns undefined.
-     *
-     * Throws NotFoundError if hobby not found.
-    **/
-    
-    static async remove(id) {
-        const result = await db.query(
-            `DELETE
-            FROM jobs
-            WHERE id = $1
-            RETURNING id`, [id]
-        );
-        const job = result.rows[0];
-
-        if (!job) throw new NotFoundError(`No job: ${id}`);
-    }
 }
+//     /** Delete given hobby from database; returns undefined.
+//      *
+//      * Throws NotFoundError if hobby not found.
+//     **/
+    
+//     static async remove(id) {
+//         const result = await db.query(
+//             `DELETE
+//             FROM jobs
+//             WHERE id = $1
+//             RETURNING id`, [id]
+//         );
+//         const job = result.rows[0];
 
-module.exports = Job;
+//         if (!job) throw new NotFoundError(`No job: ${id}`);
+//     }
+// }
+
+module.exports = Hobby;

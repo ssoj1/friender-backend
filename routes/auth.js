@@ -16,6 +16,8 @@ const multer  = require('multer');
 const upload = multer({ dest: './photos' });
 const {uploadToS3} = require("../aws.js");
 const Photo = require("../models/photo");
+const Hobby = require("../models/hobby");
+const Interest = require("../models/interest");
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -37,7 +39,6 @@ router.post("/token", async function (req, res, next) {
   return res.json({ token });
 });
 
-
 /** POST /auth/register:   { user } => { token }
  *
  * user must include 
@@ -49,11 +50,11 @@ router.post("/token", async function (req, res, next) {
  */
 
 router.post("/register", upload.single('photo'), async function (req, res, next) {
-  // const validator = jsonschema.validate(req.body, userRegisterSchema);
-  // if (!validator.valid) {
-  //   const errs = validator.errors.map(e => e.stack);
-  //   throw new BadRequestError(errs);
-  // }
+  const validator = jsonschema.validate(req.body, userRegisterSchema);
+  if (!validator.valid) {
+    const errs = validator.errors.map(e => e.stack);
+    throw new BadRequestError(errs);
+  }
 
   const base_s3_url = 'https://friender-photos.s3.amazonaws.com/';
 
@@ -67,10 +68,13 @@ router.post("/register", upload.single('photo'), async function (req, res, next)
   const token = createToken(newUser);
 
   const newPhoto = await Photo.add(newUser.id, `${base_s3_url}${req.file.filename}`);
-
   const filePath = `./photos/${req.file.filename}`; 
-  console.log("filepath is ", filePath )
+  // console.log("filepath is ", filePath )
   fs.unlinkSync(filePath);
+
+  const newHobby = await Hobby.add(newUser.id, req.body.hobbies);
+
+  const newInterest = await Interest.add(newUser.id, req.body.interests);
 
   return res.status(201).json({ token });
 });
