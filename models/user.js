@@ -134,29 +134,25 @@ class User {
    * Throws NotFoundError if user not found.
    **/
 
-  static async get(username) {
+  static async get(id) {
+    console.log("in get user by id")
     const userRes = await db.query(
           `SELECT id, 
                   username,
-                  firstName,
-                  lastName",
+                  firstname,
+                  lastname",
                   email,
                   zipcode"
           FROM users
-          WHERE username = $1`,
-        [username],
+          WHERE id = $1`,
+        [id],
     );
 
     const user = userRes.rows[0];
+    console.log("user is ", user)
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
+    if (!user) throw new NotFoundError(`User not found`);
 
-    const userApplicationsRes = await db.query(
-          `SELECT a.job_id
-          FROM applications AS a
-          WHERE a.username = $1`, [username]);
-
-    user.applications = userApplicationsRes.rows.map(a => a.job_id);
     return user;
   }
 

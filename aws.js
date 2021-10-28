@@ -33,8 +33,6 @@ function uploadToS3(fileName) {
         }
         console.log(`File uploaded successfully. ${data.Location}`);
     });
-    // console.log("fileLocation in s3.upload is ", fileLocation)
-    // return fileLocation;
 };
 
 module.exports = { uploadToS3 };
