@@ -14,7 +14,7 @@ const s3 = new AWS.S3({
 
 function uploadToS3(fileName) {
     // Read content from the file
-    const fileContent = fs.readFileSync(fileName);
+    const fileContent = fs.readFileSync(`photos/${fileName}`);
 
     // Setting up S3 upload parameters
     const params = {
