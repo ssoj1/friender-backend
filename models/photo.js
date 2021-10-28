@@ -10,6 +10,7 @@ const {
   UnauthorizedError,
 } = require("../expressError");
 
+
 // const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 /** Related functions for photos. */
@@ -21,13 +22,19 @@ class Photo {
 
   /** Add a photo URL to photos table in DB */
   static async add(userId, photoUrl) {
+    console.log("in add photo function ", {userId, photoUrl});
 
     const result = await db.query(
-          `INSERT INTO photos (user_id, url),
+          `INSERT INTO photos (user_id, url)
             VALUES ($1, $2)
             RETURNING id, user_id, url`,
         [userId, photoUrl],
     );
 
+    console.log("result is ", result)
+
+    return result;
   }
 }
+
+module.exports = Photo;

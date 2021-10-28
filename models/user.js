@@ -63,7 +63,6 @@ class User {
         lastName, 
         email, 
         zipcode, 
-        photo, 
         hobbies, 
         interests }) {
 
@@ -85,15 +84,14 @@ class User {
       `INSERT INTO users (
         username,
         password,
-        first_name,
-        last_name,
+        firstname,
+        lastname,
         email,
         zipcode
         )
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, username, firstName, lastName, email, zipcode`,
         [
-          id,
           username,
           hashedPassword,
           firstName,
@@ -104,13 +102,6 @@ class User {
         );
         
         const user = userResult.rows[0];
-
-        const photoResult = await db.query(
-          `INSERT INTO photos (user_id, url )
-          VALUES ($1, $2)
-          RETURNING id, user_id, url`,
-          [user.id, photo.name] 
-        )
         
         return user;
   }

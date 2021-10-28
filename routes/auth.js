@@ -15,6 +15,7 @@ const fs = require('fs');
 const multer  = require('multer');
 const upload = multer({ dest: './photos' });
 const {uploadToS3} = require("../aws.js");
+const Photo = require("../models/photo");
 
 /** POST /auth/token:  { username, password } => { token }
  *
@@ -53,20 +54,25 @@ router.post("/register", upload.single('photo'), async function (req, res, next)
   //   const errs = validator.errors.map(e => e.stack);
   //   throw new BadRequestError(errs);
   // }
-  console.log("req is ", req)
+
+  const base_s3_url = 'https://friender-photos.s3.amazonaws.com/';
+
   console.log("req.body is ", req.body);
   console.log("req.file is ", req.file);
 
-  const fileLocation = await uploadToS3(req.file.filename);
-
+  uploadToS3(req.file.filename);
+  // console.log("fileLocation from AWS ", fileLocation)
 
   const newUser = await User.register({ ...req.body });
   const token = createToken(newUser);
 
-  // const addPhotoToAws = await upload(req.body.name)
-  const newPhoto = await Photo.add(newUser.id, fileLocation);
+  const newPhoto = await Photo.add(newUser.id, `${base_s3_url}${req.file.filename}`);
 
-  // return res.status(201).json({ token });
+  const filePath = `./photos/${req.file.filename}`; 
+  console.log("filepath is ", filePath )
+  fs.unlinkSync(filePath);
+
+  return res.status(201).json({ token });
 });
 
 
