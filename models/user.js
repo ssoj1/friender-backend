@@ -24,7 +24,7 @@ class User {
   static async authenticate(username, password) {
     // try to find the user first
     const result = await db.query(
-          `SELECT id, 
+      `SELECT id, 
                   username,
                   password,
                   firstname,
@@ -33,7 +33,7 @@ class User {
                   zipcode
           FROM users
           WHERE username = $1`,
-        [username],
+      [username],
     );
 
     const user = result.rows[0];
@@ -58,20 +58,20 @@ class User {
    **/
 
   static async register(
-      { username, 
-        password, 
-        firstName, 
-        lastName, 
-        email, 
-        zipcode, 
-        hobbies, 
-        interests }) {
+    { username,
+      password,
+      firstName,
+      lastName,
+      email,
+      zipcode,
+      hobbies,
+      interests }) {
 
     const duplicateCheck = await db.query(
-        `SELECT username
+      `SELECT username
         FROM users
         WHERE username = $1`,
-        [username],
+      [username],
     );
 
     if (duplicateCheck.rows[0]) {
@@ -80,7 +80,7 @@ class User {
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
-    
+
     const userResult = await db.query(
       `INSERT INTO users (
         username,
@@ -92,19 +92,19 @@ class User {
         )
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, username, firstName, lastName, email, zipcode`,
-        [
-          username,
-          hashedPassword,
-          firstName,
-          lastName,
-          email,
-          zipcode,
-        ],
-        );
-        
-        const user = userResult.rows[0];
-        
-        return user;
+      [
+        username,
+        hashedPassword,
+        firstName,
+        lastName,
+        email,
+        zipcode,
+      ],
+    );
+
+    const user = userResult.rows[0];
+
+    return user;
   }
 
   /** Find all users.
@@ -114,20 +114,20 @@ class User {
 
   static async findAllUsers() {
     const result = await db.query(
-          `SELECT id, 
-              username,
-              firstname,
-              lastname,
-              email,
-              zipcode,
-              url as photoUrl, 
-              hobbies, 
-              interests
-          FROM users 
-          JOIN photos ON user_id = users.id
-          JOIN hobbies ON user_id = users.id
-          JOIN interests ON user_id = users.id
-          ORDER BY lastname, firstname`
+      `SELECT users.id,
+          username,
+          firstname,
+          lastname,
+          email,
+          zipcode,
+          url as photoUrl,
+          hobby,
+          interest
+      FROM users
+      JOIN photos ON photos.user_id = users.id
+      JOIN hobbies ON hobbies.user_id = users.id
+      JOIN interests ON interests.user_id = users.id
+      ORDER BY lastname, firstname`
     );
 
     return result.rows;
@@ -144,7 +144,7 @@ class User {
   static async get(id) {
     console.log("in get user by id")
     const userRes = await db.query(
-          `SELECT id, 
+      `SELECT id, 
                   username,
                   firstname,
                   lastname,
@@ -152,7 +152,7 @@ class User {
                   zipcode
           FROM users
           WHERE id = $1`,
-        [id],
+      [id],
     );
 
     const user = userRes.rows[0];
@@ -186,13 +186,13 @@ class User {
     }
 
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          firstName: "firstName",
-          lastName: "lastName",
-          email: "email",
-          zipcode: "zipcode",
-        });
+      data,
+      {
+        firstName: "firstName",
+        lastName: "lastName",
+        email: "email",
+        zipcode: "zipcode",
+      });
     const usernameVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE users 

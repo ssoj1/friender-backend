@@ -22,7 +22,7 @@ const router = express.Router();
 
 router.get("/", async function (req, res, next) {
   try {
-    const users = await User.findAll();
+    const users = await User.findAllUsers();
     return res.json({ users });
   } catch (err) {
     return next(err);
