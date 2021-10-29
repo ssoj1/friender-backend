@@ -15,13 +15,15 @@ const {
 /** Related functions for photos. */
 
 class Photo {
-  /** 
+  /** adds a photo url to the database
+   * 
+   * returns userId and photoUrl
    * 
    **/
 
   /** Add a photo URL to photos table in DB */
   static async add(userId, photoUrl) {
-    console.log("in add photo function ", {userId, photoUrl});
+    // console.log("in add photo function ", {userId, photoUrl});
 
     const result = await db.query(
           `INSERT INTO photos (user_id, url)
@@ -29,9 +31,6 @@ class Photo {
             RETURNING id, user_id, url`,
         [userId, photoUrl],
     );
-
-    console.log("result is ", result)
-
     return result;
   }
 }

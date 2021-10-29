@@ -12,8 +12,9 @@ const s3 = new AWS.S3({
     secretAccessKey: AWSCredentials.secret
 });
 
-
+/** Accepts a filename and sends it to S3  */
 function uploadToS3(fileName) {
+    
     // Read content from the file
     const fileContent = fs.readFileSync(`photos/${fileName}`);
     
@@ -23,8 +24,6 @@ function uploadToS3(fileName) {
         Key: fileName,
         Body: fileContent
     };
-    
-    // console.log("s3 parapms ", params);
 
     // Uploading files to the bucket
     s3.upload(params, function(err, data) {

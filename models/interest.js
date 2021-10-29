@@ -5,14 +5,14 @@ const { NotFoundError} = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 
-/** Related functions for hobbies. */
+/** Related functions for interests. */
 
 class Interest {
-    /** Create a hobby (from data), update db, return new hobby data.
+    /** Create a interests (from data), update db, return new interests data.
      *
-     * data should be { user_id, hobby }
+     * data should be { user_id, interests }
      *
-     * Returns { id, user_id, hobby }
+     * Returns { id, user_id, interests }
     **/
     static async add(id, interests) {
         const result = await db.query(

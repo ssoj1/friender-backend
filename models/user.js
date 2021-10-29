@@ -52,7 +52,7 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { id, username, firstName, lastName, email, zipcode }
    *
    * Throws BadRequestError on duplicates.
    **/
@@ -64,8 +64,7 @@ class User {
       lastName,
       email,
       zipcode,
-      hobbies,
-      interests }) {
+    }) {
 
     const duplicateCheck = await db.query(
       `SELECT username
@@ -79,7 +78,6 @@ class User {
     }
 
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-
 
     const userResult = await db.query(
       `INSERT INTO users (
@@ -109,7 +107,7 @@ class User {
 
   /** Find all users.
    *
-   * Returns [{ username, first_name, last_name, email, is_admin }, ...]
+   * Returns [{ id, username, firstname, lastname, email, zipcode, photoUrl, hobby, interest }, ...]
    **/
 
   static async findAllUsers() {
@@ -135,8 +133,7 @@ class User {
 
   /** Given a username, return data about user.
    *
-   * Returns { username, first_name, last_name, is_admin, jobs }
-   *   where jobs is { id, title, company_handle, company_name, state }
+   * Returns { username, firstname, lastname, email, zipcode }
    *
    * Throws NotFoundError if user not found.
    **/
@@ -162,70 +159,6 @@ class User {
 
     return user;
   }
-
-  /** Update user data with `data`.
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain
-   * all the fields; this only changes provided ones.
-   *
-   * Data can include:
-   *   { firstName, lastName, password, email, isAdmin }
-   *
-   * Returns { username, firstName, lastName, email, isAdmin }
-   *
-   * Throws NotFoundError if not found.
-   *
-   * WARNING: this function can set a new password or make a user an admin.
-   * Callers of this function must be certain they have validated inputs to this
-   * or a serious security risks are opened.
-   */
-
-  static async update(username, data) {
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
-    }
-
-    const { setCols, values } = sqlForPartialUpdate(
-      data,
-      {
-        firstName: "firstName",
-        lastName: "lastName",
-        email: "email",
-        zipcode: "zipcode",
-      });
-    const usernameVarIdx = "$" + (values.length + 1);
-
-    const querySql = `UPDATE users 
-                      SET ${setCols} 
-                      WHERE username = ${usernameVarIdx} 
-                      RETURNING username,
-                                firstName,
-                                lastName",
-                                email,
-                                zipcode`;
-    const result = await db.query(querySql, [...values, username]);
-    const user = result.rows[0];
-
-    if (!user) throw new NotFoundError(`No user: ${username}`);
-
-    delete user.password;
-    return user;
-  }
-
-  /** Delete given user from database; returns undefined. */
-
-  // static async remove(username) {
-  //   let result = await db.query(
-  //         `DELETE
-  //          FROM users
-  //          WHERE username = $1
-  //          RETURNING username`,
-  //       [username],
-  //   );
-  //   const user = result.rows[0];
-
-  //   if (!user) throw new NotFoundError(`No user: ${username}`);
-  // }
 
 }
 
