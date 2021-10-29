@@ -29,4 +29,20 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+/** GET /[id] => { user }
+ *
+ * Returns { id, username, firstname, lastname, email, zipcode }
+ *
+ * Authorization required: logged in
+ **/
+
+ router.get("/:id", ensureLoggedIn, async function (req, res, next) {
+  try {
+    const user = await User.get(req.params.id);
+    return res.json({ user });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
