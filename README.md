@@ -2,8 +2,11 @@
 
 Tinder Clone. A site where users can create basic profiles with their name, zip code, hobbies, interests, etc. They can then see a list of other users. 
 
-*Install dependancies*: npm install
-*Start the Server*: nodemon server.js
+**Install dependancies**: 
+npm install
+
+**Start the Server**: 
+nodemon server.js
 
 Planned features: 
 * Add testing
